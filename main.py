@@ -38,7 +38,7 @@ class Generator:
         endpoints = {}
 
         for endpoint in self.example_data.columns[self.example_data.columns.str.contains("endpoints_os_")]:
-            endpoints[endpoint] = np.random.randint(self.example_data[endpoint].max(), size=self.rows)
+            endpoints[endpoint] = np.random.randint(self.example_data[endpoint].max() or 1, size=self.rows)
 
         endpoints["endpoints_all"] = np.zeros(self.rows)
 
@@ -54,7 +54,7 @@ class Generator:
                         ]
 
         for endpoint in left_columns:
-            endpoints[endpoint] = np.random.randint(self.example_data[endpoint].max(), size=self.rows)
+            endpoints[endpoint] = np.random.randint(self.example_data[endpoint].max() or 1, size=self.rows)
 
         return endpoints
 
@@ -67,7 +67,7 @@ class Generator:
         """
         instances = {}
         for instance in self.example_data.columns[self.example_data.columns.str.contains("instances")]:
-            instances[instance] = np.random.randint(self.example_data[instance].max(), size=self.rows)
+            instances[instance] = np.random.randint(self.example_data[instance].max() or 1, size=self.rows)
         return instances
 
     def _generate_other(self) -> dict:
@@ -95,7 +95,7 @@ class Generator:
         ]
         # checks whether a column should be omitted or not
         for column in (omitted for omitted in columns if omitted not in to_be_omitted):
-            other_columns[column] = np.random.randint(self.example_data[column].max(), size=self.rows)
+            other_columns[column] = np.random.randint(self.example_data[column].max() or 1, size=self.rows)
 
         other_columns["lmt_database_type"] = np.random.choice(
             self.example_data["lmt_database_type"].unique(),
