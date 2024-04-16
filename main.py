@@ -1,4 +1,4 @@
-from datetime import date, timedelta, datetime
+from datetime import datetime
 import pandas as pd
 import numpy as np
 
@@ -11,15 +11,30 @@ class Generator:
                  end_date: datetime = datetime(2025, 5, 1)
                  ):
         """
+        Generator for ILMT values returning DataFrame object upon calling generate() method
 
-        :param rows:
+        :param rows: number of rows to be generated
+        :type rows: int
+        :param example_file: file that will work as an example(path to the file)
+        :type example_file: str
+        :param start_date: start date of our generation
+        :type start_date: datetime
+        :param end_date: end date of our generation
+        :type end_date: datetime
         """
         self.rows = rows
         self.example_data = pd.read_csv(example_file)
         self.start_date = start_date
         self.end_date = end_date
 
-    def _generate_endpoints(self):
+    def _generate_endpoints(self) -> dict:
+        """
+        Generates columns with endpoints values
+
+        :return: dictionary with values of endpoints
+        :rtype: dict
+        """
+
         endpoints = {}
 
         for endpoint in self.example_data.columns[self.example_data.columns.str.contains("endpoints_os_")]:
@@ -43,23 +58,32 @@ class Generator:
 
         return endpoints
 
-    def _generate_instances(self):
+    def _generate_instances(self) -> dict:
+        """
+        Generates columns with instances values
+
+        :return: dictionary with instances
+        :rtype: dict
+        """
         instances = {}
         for instance in self.example_data.columns[self.example_data.columns.str.contains("instances")]:
             instances[instance] = np.random.randint(self.example_data[instance].max(), size=self.rows)
         return instances
 
-    def _generate_other(self):
+    def _generate_other(self) -> dict:
         """
         Generates columns not falling into main categories
 
-        :return:
+        :return: dictionary with values of other categories
+        :rtype: dict
         """
         other_columns = {}
+        # selects columns that have not been yet used
         columns = self.example_data.columns
         columns = columns[~columns.str.contains("endpoints")]
         columns = columns[~columns.str.contains("instances")]
 
+        # columns which will be omitted
         to_be_omitted = [
             "data_collection_time",
             "lmt_server_install_time",
