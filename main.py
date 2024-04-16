@@ -152,4 +152,5 @@ class Generator:
 
 
 if __name__ == '__main__':
-    gen = Generator(100, "history.csv")
+    gen = Generator(1000, "history.csv")
+    print(gen.generate())
